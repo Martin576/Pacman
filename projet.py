@@ -173,7 +173,7 @@ class Partie:
 
   def __init__(self):
     self.labyrinthe = creerLabyrinthe10x10()
-    self.positionDuJoueur = (0, 9)
+    self.positionDuJoueur = (0, 0)
 
   def afficherPositionJoueur(self):
     print("Position du joueur :", self.positionDuJoueur)
@@ -198,7 +198,7 @@ class Partie:
   def peutSeDeplacerVersLaGauche(self, iActuel, jActuel):
     return self.labyrinthe[iActuel][jActuel][0] == False
 
-  def deplacerJoueurVersLeHaut(self, iActuel, jActuel):
+  def deplacerJoueurVersLeHaut(self):
     (i, j) = self.positionDuJoueur
     if (self.peutSeDeplacerVersLeHaut(i, j) == True):
       self.positionDuJoueur = (i, j+1)
@@ -217,20 +217,33 @@ class Partie:
 
   def peutSeDeplacerVersLeBas(self, iActuel, jActuel):
     return self.labyrinthe[iActuel + 1][jActuel][1] == False
+
+  def recupererProchainAction(self):
+    action = input("Quelle est votre action ? (entre haut, bas, droite ou gauche)")
+    return(action)
+  
   def afficher(self):
     # Ecrire une belle fonction qui utilise self.labyrinthe et self.positionDuJoueur
     pass
 
-partie = Partie()
-partie.afficherPositionJoueur()
-partie.deplacerJoueurVersLaDroite()
-partie.afficherPositionJoueur()
+
 
 def effectuerAction(partie, action):
-  if (action == "deplacementVersLaDroite"):
-    partie.deplacerJoueurVersLaDroite()
+  if (action == "haut"):
+      partie.deplacerJoueurversLeHaut()
+  if (action == "bas"):
+      partie.deplacerJoueurVersLeBas()
+  if (action == "droite"):
+      partie.deplacerJoueurVersLaDroite()
+  if (action == "gauche"):
+      partie.deplacerJoueurVersLaGauche()
+  return(self.positionDuJoueur)
+  
+
+partie = Partie()
 
 
+partie.afficher()
 while(True):
   prochaineAction = recupererProchaineAction() # Fonction basée sur input()
   effectuerAction(partie, prochaineAction)
