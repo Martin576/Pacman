@@ -1,4 +1,4 @@
-# print(42)
+print(42)
 
 # labyrinthe stable 10x10
 #étape 1 
@@ -80,41 +80,41 @@ def creerLabyrinthe6x6():
   laby = [[]] * (7)
   for i in range (0, 7):
     laby[i] = [0] * (7)
-  laby[0][0] = [True, True, False]
-  laby[0][6] = [True, False, False]
+  laby[0][0] = [True, True]
+  laby[0][6] = [True, False]
   for i in range (1, 6):
-    laby[0][i] = [False, True, False]
+    laby[0][i] = [False, True]
   for j in range (1, 6):
-    laby[j][0] = [True, False, False]
-    laby[j][6] = [True, False, False]
+    laby[j][0] = [True, False]
+    laby[j][6] = [True, False]
     for k in range (1, 6):
-      laby[j][k] = [False, False, False]
-  laby[6][0] = [False, True, False]
-  laby[6][6] = [False, False, False]
+      laby[j][k] = [False, False]
+  laby[6][0] = [False, True]
+  laby[6][6] = [False, False]
   for m in range (1, 6):
-    laby[6][m] = [False,True,False]
-  laby[0][1] = [True, True,False]
-  laby[1][1] = [False, True, False]
-  laby[1][2] = [False, True, False]
-  laby[1][3] = [False, True, False]
-  laby[1][4] = [True, False, False]
-  laby[1][5] = [True, False, False]
-  laby[2][1] = [False, True, False]
-  laby[2][2] = [True, True, False]
-  laby[2][5] = [False, True, False]
-  laby[3][0] = [True, True, False]
-  laby[3][1] = [True, False, False]
-  laby[3][2] = [True, False, False]
-  laby[3][3] = [False, True, False]
-  laby[3][4] = [True, False, False]
-  laby[3][5] = [False, True, False]
-  laby[4][1] = [True, False, False]
-  laby[4][2] = [False, True, True]
-  laby[4][3] = [False, True, False]
-  laby[4][5] = [True, False, False]
-  laby[5][1] = [False, True, False]
-  laby[5][3] = [False, True, False]
-  laby[5][4] = [True, True, False]
+    laby[6][m] = [False,True]
+  laby[0][1] = [True, True]
+  laby[1][1] = [False, True]
+  laby[1][2] = [False, True]
+  laby[1][3] = [False, True]
+  laby[1][4] = [True, False]
+  laby[1][5] = [True, False]
+  laby[2][1] = [False, True]
+  laby[2][2] = [True, True]
+  laby[2][5] = [False, True]
+  laby[3][0] = [True, True]
+  laby[3][1] = [True, False]
+  laby[3][2] = [True, False]
+  laby[3][3] = [False, True]
+  laby[3][4] = [True, False]
+  laby[3][5] = [False, True]
+  laby[4][1] = [True, False]
+  laby[4][2] = [False, True]
+  laby[4][3] = [False, True]
+  laby[4][5] = [True, False]
+  laby[5][1] = [False, True]
+  laby[5][3] = [False, True]
+  laby[5][4] = [True, True]
   return(laby)
 
 # Fonction : hauteurLabyrinthe
@@ -127,10 +127,6 @@ def largeurLabyrinthe(laby):
   l = len(laby[0]) - 1
   return(l)
 
-def afficherPointMurAGauche():
-  return("| • ")
-def afficherPointSansMur():
-  return("  • ")
 def afficherUnMurAuDessus():
   return("+---")
 def afficherPasDeMurAuDessus():
@@ -154,14 +150,10 @@ def afficherUneLigneMilieu(t):
   l = len(t)
   u = [0] * (l + 1)
   for i in range (0, l):
-    if (t[i][0] == True) and (t[i][2]==True):
-      u[i] = afficherPointMurAGauche()
-    if (t[i][0] == True) and (t[i][2]==False):
+    if (t[i][0] == True):
       u[i] = afficherUnMurAGauche()
-    if (t[i][0] == False) and (t[i][2]==False):
+    else:
       u[i] = afficherPasDeMurAGauche()
-    if (t[i][0] == False) and (t[i][2]==True):
-      u[i] = afficher()
   for j in range (0, l):
     print(u[j], end="")
   print()
@@ -171,10 +163,10 @@ def afficherLabyrinthe(laby):
     afficherUneLigneDuHaut(laby[i])
     afficherUneLigneMilieu(laby[i])
 
-# laby1 = creerLabyrinthe10x10()
-# afficherLabyrinthe(laby1)
-# laby2 = creerLabyrinthe6x6()
-# afficherLabyrinthe(laby2)
+#laby1 = creerLabyrinthe10x10()
+#afficherLabyrinthe(laby1)
+#laby2 = creerLabyrinthe6x6()
+#afficherLabyrinthe(laby2)
 
 
 class Partie:
@@ -188,14 +180,43 @@ class Partie:
 
   def deplacerJoueurVersLaDroite(self):
     (i, j) = self.positionDuJoueur
-    if (self.peutSeDeplacerVersLaDroite(i, j)):
+    if (self.peutSeDeplacerVersLaDroite(i, j)==True):
       self.positionDuJoueur = (i, j+1)
     else:
-      pass
+      print("Il y a un mur à droite....")
 
   def peutSeDeplacerVersLaDroite(self, iActuel, jActuel):
-    return self.labyrinthe[iActuel][jActuel][0] == True
+    return self.labyrinthe[iActuel][jActuel + 1][0] == False
 
+  def deplacerJoueurVersLaGauche(self):
+    (i, j) = self.positionDuJoueur
+    if (self.peutSeDeplacerVersLaGauche(i, j)==True):
+      self.positionDuJoueur = (i, j+1)
+    else:
+      print ("Mur à gauche...")
+
+  def peutSeDeplacerVersLaGauche(self, iActuel, jActuel):
+    return self.labyrinthe[iActuel][jActuel][0] == False
+
+  def deplacerJoueurVersLeHaut(self, iActuel, jActuel):
+    (i, j) = self.positionDuJoueur
+    if (self.peutSeDeplacerVersLeHaut(i, j) == True):
+      self.positionDuJoueur = (i, j+1)
+    else:
+      print("Il y a un mur en haut....")
+
+  def peutSeDeplacerVersLeHaut(self, iActuel, jActuel):
+    return self.labyrinthe[iActuel][jActuel][1] == False   
+  
+  def deplacerJoueurVersLeBas(self):
+    (i, j) = self.positionDuJoueur
+    if (self.peutSeDeplacerVersLaDroite(i, j)==True):
+      self.positionDuJoueur = (i, j+1)
+    else:
+      print ("Mur en Bas...")
+
+  def peutSeDeplacerVersLeBas(self, iActuel, jActuel):
+    return self.labyrinthe[iActuel + 1][jActuel][1] == False
   def afficher(self):
     # Ecrire une belle fonction qui utilise self.labyrinthe et self.positionDuJoueur
     pass
