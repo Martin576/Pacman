@@ -132,9 +132,15 @@ def afficherUnMurAuDessus():
 def afficherPasDeMurAuDessus():
   return("+   ")
 def afficherUnMurAGauche():
-  return("|   ")
+  return("|")
 def afficherPasDeMurAGauche():
-  return("    ")
+  return(" ")
+def afficherContenuCase(iCase, jCase, iJoueur, jJoueur):
+  if ((iCase == iJoueur) and (jCase == jJoueur)):
+    return(" • ")
+  else:
+    return("   ")
+
 def afficherUneLigneDuHaut(t):
   l = len(t)
   u = [0] * (l + 1)
@@ -146,22 +152,24 @@ def afficherUneLigneDuHaut(t):
   for j in range (0, l):
     print(u[j], end="")
   print()
-def afficherUneLigneMilieu(t):
-  l = len(t)
+
+def afficherUneLigneMilieu(ligne, iLigne, iJoueur, jJoueur):
+  l = len(ligne)
   u = [0] * (l + 1)
-  for i in range (0, l):
-    if (t[i][0] == True):
-      u[i] = afficherUnMurAGauche()
-    else:
-      u[i] = afficherPasDeMurAGauche()
   for j in range (0, l):
-    print(u[j], end="")
+    if (ligne[j][0] == True):
+      u[j] = afficherUnMurAGauche() + afficherContenuCase(iLigne, j, iJoueur, jJoueur)
+    else:
+      u[j] = afficherPasDeMurAGauche() + afficherContenuCase(iLigne, j, iJoueur, jJoueur)
+  for k in range (0, l):
+    print(u[k], end="")
   print()
-def afficherLabyrinthe(laby):
+
+def afficherLabyrinthe(laby, iJoueur, jJoueur):
   h = hauteurLabyrinthe(laby) + 1
   for i in range(0, h):
     afficherUneLigneDuHaut(laby[i])
-    afficherUneLigneMilieu(laby[i])
+    afficherUneLigneMilieu(laby[i],i,iJoueur,jJoueur)
 
 #laby1 = creerLabyrinthe10x10()
 #afficherLabyrinthe(laby1)
@@ -191,7 +199,7 @@ class Partie:
   def deplacerJoueurVersLaGauche(self):
     (i, j) = self.positionDuJoueur
     if (self.peutSeDeplacerVersLaGauche(i, j)==True):
-      self.positionDuJoueur = (i, j+1)
+      self.positionDuJoueur = (i, j-1)
     else:
       print ("Mur à gauche...")
 
@@ -201,7 +209,7 @@ class Partie:
   def deplacerJoueurVersLeHaut(self):
     (i, j) = self.positionDuJoueur
     if (self.peutSeDeplacerVersLeHaut(i, j) == True):
-      self.positionDuJoueur = (i, j+1)
+      self.positionDuJoueur = (i-1, j)
     else:
       print("Il y a un mur en haut....")
 
@@ -210,41 +218,50 @@ class Partie:
   
   def deplacerJoueurVersLeBas(self):
     (i, j) = self.positionDuJoueur
-    if (self.peutSeDeplacerVersLaDroite(i, j)==True):
-      self.positionDuJoueur = (i, j+1)
+    if (self.peutSeDeplacerVersLeBas(i, j)==True):
+      self.positionDuJoueur = (i+1, j)
     else:
       print ("Mur en Bas...")
 
   def peutSeDeplacerVersLeBas(self, iActuel, jActuel):
-    return self.labyrinthe[iActuel + 1][jActuel][1] == False
+    x=self.labyrinthe[iActuel + 1][jActuel]
+    if (self.labyrinthe[iActuel + 1][jActuel][1] == False):
+      return(True)
 
-  def recupererProchainAction(self):
-    action = input("Quelle est votre action ? (entre haut, bas, droite ou gauche)")
-    return(action)
   
+
   def afficher(self):
     # Ecrire une belle fonction qui utilise self.labyrinthe et self.positionDuJoueur
-    pass
+    (i, j) = self.positionDuJoueur
+    afficherLabyrinthe(self.labyrinthe, i, j)
 
-
-
-def effectuerAction(partie, action):
-  if (action == "haut"):
-      partie.deplacerJoueurversLeHaut()
-  if (action == "bas"):
+  def effectuerAction(self, partie, action):
+    if (action == "haut"):
+      partie.deplacerJoueurVersLeHaut()
+    if (action == "bas"):
       partie.deplacerJoueurVersLeBas()
-  if (action == "droite"):
+    if (action == "droite"):
       partie.deplacerJoueurVersLaDroite()
-  if (action == "gauche"):
+    if (action == "gauche"):
       partie.deplacerJoueurVersLaGauche()
-  return(self.positionDuJoueur)
-  
+    return(self.positionDuJoueur)
+
+  def afficheLesCoordonneesDuJoueur(self):
+    print(self.positionDuJoueur)
+
+def recupererProchainAction():
+  action = input("Quelle est votre action ? (entre haut, bas, droite ou gauche)")
+  return(action)  
+
 
 partie = Partie()
 
+partie.afficherPositionJoueur()
 
 partie.afficher()
 while(True):
-  prochaineAction = recupererProchaineAction() # Fonction basée sur input()
-  effectuerAction(partie, prochaineAction)
+  partie.afficherPositionJoueur()
+  prochaineAction = recupererProchainAction() # Fonction basée sur input()
+  partie.effectuerAction(partie, prochaineAction)
   partie.afficher()
+  
