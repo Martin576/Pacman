@@ -135,11 +135,15 @@ def afficherUnMurAGauche():
   return("|")
 def afficherPasDeMurAGauche():
   return(" ")
-def afficherContenuCase(iCase, jCase, iJoueur, jJoueur):
+def afficherContenuCase(iCase, jCase, iJoueur, jJoueur, tableauParallele):
   if ((iCase == iJoueur) and (jCase == jJoueur)):
-    return(" • ")
+    return(" O ")
   else:
-    return("   ")
+    if (tableauParallele[iCase][jCase] == True):
+      return("   ")
+    else:
+      return(" • ")
+    
 
 def afficherUneLigneDuHaut(t):
   l = len(t)
@@ -153,28 +157,42 @@ def afficherUneLigneDuHaut(t):
     print(u[j], end="")
   print()
 
-def afficherUneLigneMilieu(ligne, iLigne, iJoueur, jJoueur):
+def afficherUneLigneMilieu(ligne, iLigne, iJoueur, jJoueur, tableauParallele):
   l = len(ligne)
   u = [0] * (l + 1)
   for j in range (0, l):
     if (ligne[j][0] == True):
-      u[j] = afficherUnMurAGauche() + afficherContenuCase(iLigne, j, iJoueur, jJoueur)
+      u[j] = afficherUnMurAGauche() + afficherContenuCase(iLigne, j, iJoueur, jJoueur, tableauParallele)
     else:
-      u[j] = afficherPasDeMurAGauche() + afficherContenuCase(iLigne, j, iJoueur, jJoueur)
+      u[j] = afficherPasDeMurAGauche() + afficherContenuCase(iLigne, j, iJoueur, jJoueur, tableauParallele)
   for k in range (0, l):
     print(u[k], end="")
   print()
 
-def afficherLabyrinthe(laby, iJoueur, jJoueur):
+def afficherLabyrinthe(laby, iJoueur, jJoueur, tableauParallele):
   h = hauteurLabyrinthe(laby) + 1
   for i in range(0, h):
     afficherUneLigneDuHaut(laby[i])
-    afficherUneLigneMilieu(laby[i],i,iJoueur,jJoueur)
+    afficherUneLigneMilieu(laby[i],i,iJoueur,jJoueur, tableauParallele)
 
 #laby1 = creerLabyrinthe10x10()
 #afficherLabyrinthe(laby1)
 #laby2 = creerLabyrinthe6x6()
 #afficherLabyrinthe(laby2)
+
+def tableauParallele():
+  laby = creerLabyrinthe10x10()
+  l = len(laby[0]) 
+  h = len(laby) 
+  tableau = [[]] * h
+  for i in range (h):
+    tableau[i] = [False] * l
+  for k in range (l):
+    tableau[10][k] = True
+  for k in range (h):
+    tableau[k][10] = True
+
+  return(tableau)
 
 
 class Partie:
@@ -182,6 +200,8 @@ class Partie:
   def __init__(self):
     self.labyrinthe = creerLabyrinthe10x10()
     self.positionDuJoueur = (0, 0)
+    self.tableauParallele =  tableauParallele()
+    self.compteur = -1
 
   def afficherPositionJoueur(self):
     print("Position du joueur :", self.positionDuJoueur)
@@ -224,16 +244,20 @@ class Partie:
       print ("Mur en Bas...")
 
   def peutSeDeplacerVersLeBas(self, iActuel, jActuel):
-    x=self.labyrinthe[iActuel + 1][jActuel]
+    x = self.labyrinthe[iActuel + 1][jActuel]
     if (self.labyrinthe[iActuel + 1][jActuel][1] == False):
       return(True)
 
-  
+  def mettreAJourTableauTest(self):
+    (i, j) = self.positionDuJoueur
+    self.tableauParallele[i][j] = True
+    self.compteur = self.compteur + 1
+    return(self.tableauParallele)
 
   def afficher(self):
     # Ecrire une belle fonction qui utilise self.labyrinthe et self.positionDuJoueur
     (i, j) = self.positionDuJoueur
-    afficherLabyrinthe(self.labyrinthe, i, j)
+    afficherLabyrinthe(self.labyrinthe, i, j, self.tableauParallele)
 
   def effectuerAction(self, partie, action):
     if (action == "haut"):
@@ -260,8 +284,23 @@ partie.afficherPositionJoueur()
 
 partie.afficher()
 while(True):
+  partie.mettreAJourTableauTest()
   partie.afficherPositionJoueur()
+  print(partie.compteur)
   prochaineAction = recupererProchainAction() # Fonction basée sur input()
   partie.effectuerAction(partie, prochaineAction)
   partie.afficher()
-  
+
+
+  #affichage : l.141
+  #if (caseDejaVisite==True):
+  # print ("   ")
+  #else:
+  #print (" . ")
+
+ #def caseDejaVisite :
+ # Utilistion du TD replit
+
+ #compteur score ?
+
+ 
