@@ -135,7 +135,9 @@ def afficherUnMurAGauche():
   return("|")
 def afficherPasDeMurAGauche():
   return(" ")
-def afficherContenuCase(iCase, jCase, iJoueur, jJoueur, tableauParallele):
+def afficherContenuCase(iCase, jCase, iJoueur, jJoueur, tableauParallele, iFantome, jFantome, iFantome2, jFantome2, iFantome3, jFantome3):
+  if (((iCase == iFantome) and (jCase == jFantome)) or ((iCase == iFantome2) and (jCase == jFantome2)) or ((iCase == iFantome3) and (jCase == jFantome3))):
+    return(" F ")
   if ((iCase == iJoueur) and (jCase == jJoueur)):
     return(" O ")
   else:
@@ -157,23 +159,23 @@ def afficherUneLigneDuHaut(t):
     print(u[j], end="")
   print()
 
-def afficherUneLigneMilieu(ligne, iLigne, iJoueur, jJoueur, tableauParallele):
+def afficherUneLigneMilieu(ligne, iLigne, iJoueur, jJoueur, tableauParallele, iFantome, jFantome, iFantome2, jFantome2, iFantome3, jFantome3):
   l = len(ligne)
   u = [0] * (l + 1)
   for j in range (0, l):
     if (ligne[j][0] == True):
-      u[j] = afficherUnMurAGauche() + afficherContenuCase(iLigne, j, iJoueur, jJoueur, tableauParallele)
+      u[j] = afficherUnMurAGauche() + afficherContenuCase(iLigne, j, iJoueur, jJoueur, tableauParallele, iFantome, jFantome, iFantome2, jFantome2, iFantome3, jFantome3)
     else:
-      u[j] = afficherPasDeMurAGauche() + afficherContenuCase(iLigne, j, iJoueur, jJoueur, tableauParallele)
+      u[j] = afficherPasDeMurAGauche() + afficherContenuCase(iLigne, j, iJoueur, jJoueur, tableauParallele, iFantome, jFantome, iFantome2, jFantome2, iFantome3, jFantome3)
   for k in range (0, l):
     print(u[k], end="")
   print()
 
-def afficherLabyrinthe(laby, iJoueur, jJoueur, tableauParallele):
+def afficherLabyrinthe(laby, iJoueur, jJoueur, tableauParallele, iFantome, jFantome, iFantome2, jFantome2, iFantome3, jFantome3):
   h = hauteurLabyrinthe(laby) + 1
   for i in range(0, h):
     afficherUneLigneDuHaut(laby[i])
-    afficherUneLigneMilieu(laby[i],i,iJoueur,jJoueur, tableauParallele)
+    afficherUneLigneMilieu(laby[i],i,iJoueur,jJoueur, tableauParallele, iFantome, jFantome, iFantome2, jFantome2, iFantome3, jFantome3)
 
 #laby1 = creerLabyrinthe10x10()
 #afficherLabyrinthe(laby1)
@@ -194,12 +196,16 @@ def tableauParallele():
 
   return(tableau)
 
+import random
 
 class Partie:
 
   def __init__(self):
     self.labyrinthe = creerLabyrinthe10x10()
     self.positionDuJoueur = (0, 0)
+    self.positionFantome = (9,9)
+    self.positionFantome2 = (0,9)
+    self.positionFantome3 = (9, 0)
     self.tableauParallele =  tableauParallele()
     self.compteur = -1
 
@@ -250,14 +256,20 @@ class Partie:
 
   def mettreAJourTableauTest(self):
     (i, j) = self.positionDuJoueur
-    self.tableauParallele[i][j] = True
-    self.compteur = self.compteur + 1
+    if (self.tableauParallele[i][j] == True):
+      self.tableauParallele[i][j] = True
+    else :
+      self.tableauParallele[i][j] = True
+      self.compteur = self.compteur + 1
     return(self.tableauParallele)
 
   def afficher(self):
     # Ecrire une belle fonction qui utilise self.labyrinthe et self.positionDuJoueur
     (i, j) = self.positionDuJoueur
-    afficherLabyrinthe(self.labyrinthe, i, j, self.tableauParallele)
+    (iFantome, jFantome) = self.positionFantome
+    (iFantome2, jFantome2) = self.positionFantome2
+    (iFantome3, jFantome3) = self.positionFantome3
+    afficherLabyrinthe(self.labyrinthe, i, j, self.tableauParallele, iFantome, jFantome, iFantome2, jFantome2, iFantome3, jFantome3)
 
   def effectuerAction(self, partie, action):
     if (action == "haut"):
@@ -273,6 +285,79 @@ class Partie:
   def afficheLesCoordonneesDuJoueur(self):
     print(self.positionDuJoueur)
 
+  def bougerAleatoirementUnFantome(self):
+    (i, j) = self.positionFantome
+    listeDesPositionsQueLeDePeutTirer = list()
+    if (self.peutSeDeplacerVersLaDroite( i, j) == True):
+      listeDesPositionsQueLeDePeutTirer.append(0)
+    if (self.peutSeDeplacerVersLaGauche( i, j) == True):
+      listeDesPositionsQueLeDePeutTirer.append(1)
+    if (self.peutSeDeplacerVersLeHaut( i, j) == True):
+      listeDesPositionsQueLeDePeutTirer.append(2)
+    if (self.peutSeDeplacerVersLeBas( i, j) == True):
+      listeDesPositionsQueLeDePeutTirer.append(3)
+    longueur = len(listeDesPositionsQueLeDePeutTirer)
+    x = random.randint(0,longueur-1)
+    position = listeDesPositionsQueLeDePeutTirer.pop(x)
+    if (position == 0):
+      self.positionFantome = (i, j+1)
+    if (position == 1):
+      self.positionFantome = (i, j-1)
+    if (position == 2):
+      self.positionFantome = (i-1, j)
+    if (position == 3):
+      self.positionFantome = (i+1, j)
+    return(self.positionFantome)
+         
+  def bougerAleatoirementUnFantome2(self):
+    (i, j) = self.positionFantome2
+    listeDesPositionsQueLeDePeutTirer = list()
+    if (self.peutSeDeplacerVersLaDroite( i, j) == True): 
+      listeDesPositionsQueLeDePeutTirer.append(0)
+    if (self.peutSeDeplacerVersLaGauche( i, j) == True):
+      listeDesPositionsQueLeDePeutTirer.append(1)
+    if (self.peutSeDeplacerVersLeHaut( i, j) == True):
+      listeDesPositionsQueLeDePeutTirer.append(2)
+    if (self.peutSeDeplacerVersLeBas( i, j) == True):
+      listeDesPositionsQueLeDePeutTirer.append(3)
+    longueur = len(listeDesPositionsQueLeDePeutTirer)
+    x = random.randint(0,longueur-1)
+    position = listeDesPositionsQueLeDePeutTirer.pop(x)
+    if (position == 0):
+      self.positionFantome2 = (i, j+1)
+    if (position == 1):
+      self.positionFantome2 = (i, j-1)
+    if (position == 2):
+      self.positionFantome2 = (i-1, j)
+    if (position == 3):
+      self.positionFantome2 = (i+1, j)
+    return(self.positionFantome2)
+  
+  def bougerAleatoirementUnFantome3(self):
+    (i, j) = self.positionFantome3
+    listeDesPositionsQueLeDePeutTirer = list()
+    if (self.peutSeDeplacerVersLaDroite( i, j) == True):
+      listeDesPositionsQueLeDePeutTirer.append(0)
+    if (self.peutSeDeplacerVersLaGauche( i, j) == True):
+      listeDesPositionsQueLeDePeutTirer.append(1)
+    if (self.peutSeDeplacerVersLeHaut( i, j) == True):
+      listeDesPositionsQueLeDePeutTirer.append(2)
+    if (self.peutSeDeplacerVersLeBas( i, j) == True):
+      listeDesPositionsQueLeDePeutTirer.append(3)
+    longueur = len(listeDesPositionsQueLeDePeutTirer)
+    x = random.randint(0,longueur-1)
+    position = listeDesPositionsQueLeDePeutTirer.pop(x)
+    if (position == 0):
+      self.positionFantome3 = (i, j+1)
+    if (position == 1):
+      self.positionFantome3 = (i, j-1)
+    if (position == 2):
+      self.positionFantome3 = (i-1, j)
+    if (position == 3):
+      self.positionFantome3 = (i+1, j)
+    return(self.positionFantome3)
+
+
 def recupererProchainAction():
   action = input("Quelle est votre action ? (entre haut, bas, droite ou gauche)")
   return(action)  
@@ -285,22 +370,20 @@ partie.afficherPositionJoueur()
 partie.afficher()
 while(True):
   partie.mettreAJourTableauTest()
+  partie.bougerAleatoirementUnFantome()
+  partie.bougerAleatoirementUnFantome2()
+  partie.bougerAleatoirementUnFantome3()
+  #print (partie.mettreAJourTableauTest())
   partie.afficherPositionJoueur()
-  print(partie.compteur)
+  print("Score : " ,partie.compteur)
   prochaineAction = recupererProchainAction() # Fonction basée sur input()
   partie.effectuerAction(partie, prochaineAction)
   partie.afficher()
-
-
-  #affichage : l.141
-  #if (caseDejaVisite==True):
-  # print ("   ")
-  #else:
-  #print (" . ")
-
- #def caseDejaVisite :
- # Utilistion du TD replit
-
- #compteur score ?
+  if (partie.compteur == 98):
+    print("VOUS AVEZ GAGNE !!!!!!!!!!!!!!!!!!!!!!!!!!!")
+    break
+  if (partie.positionDuJoueur == partie.positionFantome):
+    print("VOUS AVEZ PERDU !!!!!!!!!!!!!!!!!!!!!!!!!!!")
+    break
 
  
